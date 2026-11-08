@@ -83,6 +83,7 @@ $sellingPoints  = !empty($product['selling_points']) ? explode('|', $product['se
 
     <!-- Form Thêm vào giỏ hàng (sẽ xử lý ở Cột mốc 5) -->
     <form method="POST" action="/gio-hang/them" class="d-flex gap-2 align-items-center mt-4">
+      <?= csrf_field() ?>
       <input type="hidden" name="variant_id" id="selectedVariantId" value="<?= (int)($defaultVariant['id'] ?? 0) ?>">
       <input type="number" name="quantity" value="1" min="1" max="10" class="form-control" style="width: 90px;">
       <button type="submit" id="addToCartBtn" class="btn btn-primary px-4">

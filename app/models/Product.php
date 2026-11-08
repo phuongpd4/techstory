@@ -119,4 +119,30 @@ class Product
         $stmt->execute([':pid' => $productId]);
         return $stmt->fetchAll();
     }
+    // Giỏ hàng, đặt hàng - Lấy thông tin chi tiết các biến thể 
+    public static function findVariantsByIds(array $variantIds): array
+    {
+        if (empty($variantIds)) {
+            return [];
+        }
+        // Tạo chuỗi '?,?,?' tương ứng với số lượng ID cần tìm
+        $placeholders = implode(',', array_fill(0, count($variantIds), '?'));
+        $sql = "
+            SELECT v.id AS variant_id, v.product_id, v.sku, v.color, v.ram, v.storage,
+                   v.price, v.sale_price, v.stock,
+                   p.name AS product_name, p.slug AS product_slug,
+                   (SELECT m.file_path FROM product_media m
+                    WHERE m.product_id = p.id
+                      AND (m.variant_id = v.id OR m.variant_id IS NULL)
+                    ORDER BY (m.variant_id = v.id) DESC, m.sort_order ASC
+                    LIMIT 1) AS image
+            FROM product_variants v
+            JOIN products p ON p.id = v.product_id
+            WHERE v.id IN ({$placeholders})
+        ";
+        $stmt = Database::pdo()->prepare($sql);
+        $stmt->execute(array_values($variantIds));
+        return $stmt->fetchAll();
+    }
+    
 }
