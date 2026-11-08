@@ -21,4 +21,24 @@ class ProductController extends Controller
             'filters'    => $filters,
         ]);
     }
+
+        public function show(string $slug): void
+    {
+        $product = Product::findBySlug($slug);
+        if (!$product) {
+            http_response_code(404);
+            echo '404 - Sản phẩm không tồn tại';
+            return;
+        }
+
+        $variants = Product::variants((int)$product['id']);
+        $specs    = Product::specs((int)$product['id']);
+
+        $this->render('products/show', [
+            'title'    => $product['name'],
+            'product'  => $product,
+            'variants' => $variants,
+            'specs'    => $specs,
+        ]);
+    }    
 }

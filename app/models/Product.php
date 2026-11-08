@@ -3,7 +3,7 @@
 class Product
 {
 
- public static function filter(array $filters = []): array
+    public static function filter(array $filters = []): array
     {
         $where  = ["p.status = 'published'"];
         $params = [];
@@ -75,5 +75,48 @@ class Product
         $stmt->execute();
         return $stmt->fetchAll();
     }
-    
+    //Tìm kiếm sản phẩm theo slug, trả về mảng dữ liệu sản phẩm hoặc null nếu không tìm thấy
+    public static function findBySlug(string $slug): ?array
+    {
+        $sql = "
+            SELECT p.*, c.name AS category_name, c.slug AS category_slug,
+                   b.name AS brand_name, b.slug AS brand_slug
+            FROM products p
+            JOIN categories c ON c.id = p.category_id
+            JOIN brands b ON b.id = p.brand_id
+            WHERE p.slug = :slug AND p.status = 'published'
+            LIMIT 1
+        ";
+        $stmt = Database::pdo()->prepare($sql);
+        $stmt->execute([':slug' => $slug]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+    //Lấy biến thể màu/ dung lượng kèm ảnh tương ứng
+     public static function variants(int $productId): array
+    {
+        $sql = "
+            SELECT v.*,
+                   (SELECT m.file_path FROM product_media m
+                    WHERE m.product_id = v.product_id
+                      AND (m.variant_id = v.id OR m.variant_id IS NULL)
+                    ORDER BY (m.variant_id = v.id) DESC, m.sort_order ASC
+                    LIMIT 1) AS image
+            FROM product_variants v
+            WHERE v.product_id = :pid
+            ORDER BY v.is_default DESC, v.id ASC
+        ";
+        $stmt = Database::pdo()->prepare($sql);
+        $stmt->execute([':pid' => $productId]);
+        return $stmt->fetchAll();
+    }
+    // Lấy bảng thông số kỹ thuật
+    public static function specs(int $productId): array
+    {
+        $stmt = Database::pdo()->prepare(
+            'SELECT * FROM product_specs WHERE product_id = :pid ORDER BY sort_order ASC, id ASC'
+        );
+        $stmt->execute([':pid' => $productId]);
+        return $stmt->fetchAll();
+    }
 }
