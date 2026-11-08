@@ -1,0 +1,79 @@
+<?php
+
+class Product
+{
+
+ public static function filter(array $filters = []): array
+    {
+        $where  = ["p.status = 'published'"];
+        $params = [];
+        // 1. Lọc theo slug danh mục
+        if (!empty($filters['category'])) {
+            $where[] = 'c.slug = :category';
+            $params[':category'] = $filters['category'];
+        }
+        // 2. Lọc theo slug thương hiệu
+        if (!empty($filters['brand'])) {
+            $where[] = 'b.slug = :brand';
+            $params[':brand'] = $filters['brand'];
+        }
+        // 3. Tìm kiếm theo tên sản phẩm
+        if (!empty($filters['q'])) {
+            $where[] = 'p.name LIKE :q';
+            $params[':q'] = '%' . $filters['q'] . '%';
+        }
+        // 4. Lọc theo khoảng giá (dựa trên giá thực bán COALESCE(v.sale_price, v.price))
+        if (!empty($filters['min_price'])) {
+            $where[] = 'COALESCE(v.sale_price, v.price) >= :min_price';
+            $params[':min_price'] = (int)$filters['min_price'];
+        }
+        if (!empty($filters['max_price'])) {
+            $where[] = 'COALESCE(v.sale_price, v.price) <= :max_price';
+            $params[':max_price'] = (int)$filters['max_price'];
+        }
+        // 5. Sắp xếp
+        $orderBy = match ($filters['sort'] ?? '') {
+            'price_asc'  => 'COALESCE(v.sale_price, v.price) ASC',
+            'price_desc' => 'COALESCE(v.sale_price, v.price) DESC',
+            'name_asc'   => 'p.name ASC',
+            default      => 'p.id DESC',
+        };
+        $whereSql = implode(' AND ', $where);
+        $sql = "
+            SELECT p.id, p.name, p.slug, p.short_desc,
+                   c.name AS category_name, b.name AS brand_name,
+                   v.sku, v.price, v.sale_price, v.stock,
+                   m.file_path AS image
+            FROM products p
+            JOIN categories c ON c.id = p.category_id
+            JOIN brands b ON b.id = p.brand_id
+            JOIN product_variants v ON v.product_id = p.id AND v.is_default = 1
+            LEFT JOIN product_media m ON m.product_id = p.id AND m.sort_order = 1
+            WHERE {$whereSql}
+            ORDER BY {$orderBy}
+        ";
+        $stmt = Database::pdo()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    public static function featured(int $limit = 6): array
+    {
+        $sql = " SELECT p.id, p.name, p.slug, p.short_desc,
+         c.name AS category_name, b.name AS brand_name, v.sku, v.price, v.sale_price, v.stock,
+         m.file_path AS image
+                 FROM products p
+                 JOIN categories c ON c.id = p.category_id
+                 JOIN brands b ON b.id = p.brand_id
+                 JOIN product_variants v ON v.product_id = p.id and v.is_default = 1
+                 LEFT JOIN product_media m ON m.product_id = p.id AND m.sort_order = 1
+                 WHERE p.status = 'published' AND p.is_featured = 1
+                 ORDER BY p.id DESC
+                 LIMIT :limit";
+        $stmt = Database::pdo()->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
+}

@@ -26,5 +26,6 @@ Database::connect($config['db']);
 
 $router = new Router();
 $router->get('/', [HomeController::class, 'index']);
+$router->get('/san-pham', [ProductController::class, 'index']);
 
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
