@@ -71,4 +71,17 @@ class CheckoutController extends Controller{
             }
     }
     
+    public function success(string $orderCode): void
+    {
+        $order = Order::findByCode($orderCode);
+        if(!$order){
+            http_response_code(404);
+            echo '404 - Không tìm thấy đơn hàng'; 
+            return;
+        }
+        $this->render('checkout/success', [
+            'title' => 'Đặt hàng thành công',
+            'order' => $order,
+        ]);
     }
+}
