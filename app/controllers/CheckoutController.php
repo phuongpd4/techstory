@@ -21,7 +21,7 @@ class CheckoutController extends Controller{
     public function placeOrder():void
     {
         verify_csrf();
-        $summary = Cartcontroller::getCartSummary();
+        $summary = CartController::getCartSummary();
         if(empty($summary['items'])) {
             $this->redirect('/gio-hang');
         }

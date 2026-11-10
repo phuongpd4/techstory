@@ -38,4 +38,7 @@ $router->post('/gio-hang/them', [CartController::class, 'add']);
 $router->post('/gio-hang/cap-nhat', [CartController::class, 'update']);
 $router->post('/gio-hang/xoa', [CartController::class, 'remove']);
 $router->post('/gio-hang/ma-giam-gia', [CartController::class, 'applyCoupon']);
+$router->get('/thanh-toan', [CheckoutController::class, 'index']);
+$router->post('/thanh-toan', [CheckoutController::class, 'placeOrder']);
+$router->get('/dat-hang-thanh-cong/{code}', [CheckoutController::class, 'success']);
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
