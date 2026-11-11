@@ -39,3 +39,12 @@ function current_user(): ?array
 {
     return $_SESSION['user'] ?? null;
 }
+
+function require_admin(): void
+{
+    $user = current_user();
+    if(!$user || $user['role'] !== 'admin'){
+        header('Location: /login');
+        exit;
+    }
+}

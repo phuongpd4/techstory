@@ -41,4 +41,6 @@ $router->post('/gio-hang/ma-giam-gia', [CartController::class, 'applyCoupon']);
 $router->get('/thanh-toan', [CheckoutController::class, 'index']);
 $router->post('/thanh-toan', [CheckoutController::class, 'placeOrder']);
 $router->get('/dat-hang-thanh-cong/{code}', [CheckoutController::class, 'success']);
+$router->get('/admin', [AdminController::class, 'dashboard']);
+$router->post('/admin/don-hang/trang-thai', [AdminController::class, 'updateOrderStatus']);
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);

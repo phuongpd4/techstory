@@ -131,4 +131,34 @@ class Order
 
         return $order;
     }
+    // Thống kê Admin Dashboard
+    public static function stats(): array
+    {
+        $pdo = Database::pdo();
+        return [
+            'total_orders' => (int)$pdo->query('SELECT COUNT(*) FROM orders')->fetchColumn(),
+            'total_revenue' => (int)$pdo->query("SELECT COALESCE(SUM(total),0) FROM orders WHERE status != 'cancelled'")->fetchColumn(),
+            'total_products' => (int)$pdo->query('SELECT COUNT(*) FROM products')->fetchColumn(),
+            'total_users' => (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn(),
+        ];
+    }
+
+    // Lấy danh sách tất cả đơn hàng mới nhất cho Admin
+    public static function all(): array
+    {
+        $stmt = Database::pdo()->query('SELECT * FROM orders ORDER BY id DESC');
+        return $stmt->fetchAll();
+    }
+
+    // Cập nhật trạng thái đơn hàng
+    public static function updateStatus(int $orderId, string $status): void
+    {
+        $allowed = ['pending', 'confirmed', 'shipping', 'completed', 'cancelled'];
+        if(!in_array($status, $allowed, true))
+            {
+                return;
+            }
+        $stmt = Database::pdo()->prepare('UPDATE orders SET status = :status WHERE id = :id');
+        $stmt->execute([':status' => $status, ':id' => $orderId]);    
+    }
 }
