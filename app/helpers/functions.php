@@ -44,7 +44,20 @@ function require_admin(): void
 {
     $user = current_user();
     if(!$user || $user['role'] !== 'admin'){
-        header('Location: /login');
+        header('Location: /dang-nhap');
         exit;
     }
 }
+
+
+
+function slugify(string $str): string
+{
+    $str = mb_strtolower(trim($str), 'UTF-8');
+    $str = str_replace('đ', 'd', $str); // đ không có dạng tách dấu
+    $str = Normalizer::normalize($str, Normalizer::FORM_D);
+    $str = preg_replace('/\p{Mn}+/u', '', $str); // xóa các dấu kết hợp
+    $str = preg_replace('/[^a-z0-9]+/', '-', $str);
+    return trim($str, '-');
+}
+

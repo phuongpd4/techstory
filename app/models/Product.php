@@ -145,4 +145,185 @@ class Product
         return $stmt->fetchAll();
     }
     
+    // Lấy danh sách sản phẩm cho trang admin
+    public static function adminALL(): array
+    {
+         $sql = "
+            SELECT p.id, p.name, p.slug, p.model_code, p.status, p.is_featured,
+                   c.name AS category_name, b.name AS brand_name,
+                   v.sku, v.color, v.price, v.sale_price, v.stock,
+                   m.file_path AS image
+            FROM products p
+            JOIN categories c ON c.id = p.category_id
+            JOIN brands b ON b.id = p.brand_id
+            LEFT JOIN product_variants v ON v.product_id = p.id AND v.is_default = 1
+            LEFT JOIN product_media m ON m.product_id = p.id AND m.sort_order = 1
+            ORDER BY p.id DESC
+        ";
+        return Database::pdo()->query($sql)->fetchAll();
+    }
+
+    // Thêm mới sản phẩm + biến thể mặc định + ảnh đại diện(transaction)
+    public static function createWithDefaultVariant(array $data) : int
+    {
+        $pdo = Database::pdo();
+        $pdo->beginTransaction();    
+
+        try{
+            $slug = slugify($data['name']);
+            // Thêm vào bảng products
+            $stmtProd = $pdo->prepare("
+                INSERT INTO products (
+                    category_id, brand_id, name, slug, model_code, short_desc, description,
+                     selling_points, warranty_months, is_featured, status
+                ) VALUES (
+                     :category_id,
+                     :brand_id,
+                     :name,
+                     :slug,
+                     :model_code,
+                     :short_desc,
+                     :description,
+                     :selling_points,
+                     :warranty_months,
+                     1,
+                     'published'
+                )
+            ");
+            $stmtProd->execute([
+                ':category_id' => (int)$data['category_id'],
+                ':brand_id' => (int)$data['brand_id'],
+                ':name' => $data['name'],
+                ':slug' => $slug,
+                ':model_code' => $data['model_code'],
+                ':short_desc' => $data['short_desc'],
+                ':description' => $data['description'],
+                ':selling_points' => $data['selling_points'],
+                ':warranty_months' => (int)$data['warranty_months']
+            ]);
+
+            $productId = (int)$pdo->lastInsertId();
+            //Thêm biến thể mặc định vào product_variants
+            $stmtVar = $pdo->prepare("
+                INSERT INTO product_variants
+                (
+                    product_id,
+                    sku,
+                    color,
+                    color_hex,
+                    ram,
+                    storage,
+                    price,
+                    sale_price,
+                    stock,
+                    is_default
+                ) VALUES 
+                (
+                    :product_id,
+                    :sku,
+                    :color,
+                    :color_hex,
+                    :ram,
+                    :storage,
+                    :price,
+                    :sale_price,
+                    :stock,
+                    1
+                ) 
+            ");
+            $stmtVar->execute([
+                ':product_id' => $productId,
+                ':sku' => strtoupper($data['sku']),
+                ':color' => $data['color'],
+                ':color_hex' => $data['color_hex'] ?: '#1C1C1E',
+                ':ram' => $data['ram'] ?: null,
+                ':storage' => $data['storage'] ?: null,
+                ':price' => (int)$data['price'],
+                ':sale_price' => !empty($data['sale_price']) ? (int)$data['sale_price'] : null,
+                ':stock' => (int)$data['stock'],
+            ]);
+
+            $variantID = (int)$pdo->lastInsertId();
+            // Thêm ảnh đại diện sản phẩm vào product_media
+            $imageUrl = $data['image_url'] ?: 'https://placehold.co/600x600/1C1C1E/FFFFFF?text=' . urlencode($data['name']);
+            $stmtMedia = $pdo->prepare("
+                        INSERT INTO product_media
+                        (
+                            product_id,
+                            variant_id,
+                            type,
+                            file_path,
+                            angle,
+                            alt_text,
+                            sort_order
+                        ) VALUES (
+                            :product_id,
+                            :variant_id,
+                            'image',
+                            :file_path,
+                            'front',
+                            :alt_text,
+                            1 
+                        )
+            ");
+            $stmtMedia->execute([
+                ':product_id' => $productId,
+                ':variant_id' => $variantID,
+                ':file_path' => $imageUrl,
+                ':alt_text' =>$data['name'] . ' ' . $data['color'],
+
+            ]);
+            $pdo->commit();
+            return $productId;
+        } catch (Throwable $e)
+            {
+                $pdo->rollBack();
+                throw $e;
+            }
+    }
+    // Tìm sản phẩm theo ID
+    public static function findByID(int $id) : ?array {
+        $stmt = Database::pdo()->prepare('SELECT * FROM products WHERE  id = :id LIMIT 1');
+        $stmt ->execute([':id' => $id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+    public static function addVariant(int $productId, array $data): int{
+        $pdo = Database::pdo();
+        $pdo->beginTransaction();
+        try{
+            $stmtVar = $pdo->prepare("
+            INSERT INTO product_variants(
+            product_id, sku, color, color_hex, ram, storage, price, sale_price, stock, is_default) VALUES (
+            :product_id, :sku, :color, :color_hex, :ram, :storage, :price, :sale_price, :stock, 0)
+            ");
+            $stmtVar->execute([
+                ':product_id' => $productId,
+                ':sku'        => $data['sku'],
+                ':color'      => $data['color'],
+                ':color_hex'  => $data['color_hex'],
+                ':ram'        => $data['ram'] ?: null,
+                ':storage'    => $data['storage'] ?: null,
+                ':price'      => (int)$data['price'],
+                ':sale_price' => !empty($data['sale_price']) ? (int)$data['sale_price'] : null,
+                ':stock'      => (int)$data['stock'],
+            ]);
+            $variantId = (int)$pdo->lastInsertId();
+            $stmtMedia = $pdo->prepare("
+                INSERT INTO product_media (product_id, variant_id, type, file_path, angle, alt_text, sort_order)
+                VALUES (:product_id, :variant_id, 'image', :file_path, 'front', :alt_text, 2)
+            ");
+            $stmtMedia->execute([
+                ':product_id' => $productId,
+                ':variant_id' => $variantId,
+                ':file_path'  => $data['image_path'],
+                ':alt_text'   => $data['product_name'] . ' ' . $data['color'],
+            ]);
+            $pdo->commit();
+            return $variantId;
+        }catch (Throwable $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+    }
 }
