@@ -161,4 +161,49 @@ class Order
         $stmt = Database::pdo()->prepare('UPDATE orders SET status = :status WHERE id = :id');
         $stmt->execute([':status' => $status, ':id' => $orderId]);    
     }
+
+    // Lấy danh sách đơn hàng của 1 khách hàng
+    public static function byUser(int $userID) : array {
+        $stmt = Database::pdo()->prepare('SELECT * FROM orders WHERE user_id = :uid ORDER BY id DESC');
+        $stmt->execute([':uid' => $userID]);
+        return $stmt->fetchAll();
+    }
+    //Khách  tự hủy đơn hàng khi đang trạng thái 'pending' hoàn lại tồn kho
+    public static function cancelByCustomer(int $orderId, int $userID) :void{
+       $pdo = Database::pdo();
+       $pdo->beginTransaction();
+       try{
+        $stmt = $pdo->prepare('SELECT * FROM orders WHERE id = :id AND user_id = :uid FOR UPDATE');
+        $stmt->execute([':id' => $orderId, ':uid' => $userID]);
+        $order = $stmt->fetch();
+        if(!$order){
+            throw new RuntimeException('Không tìm thấy đơn hàng của bạn.');
+
+        }
+        if($order['status'] !== 'pending'){
+            throw new RuntimeException('Chỉ có thể hủy đơn hàng khi ở trạng thái chờ xác nhận');
+
+        }
+        // Lấy các sản phẩm trong đơn để cộng trả lại tồn kho
+        $itemStmt= $pdo->prepare('SELECT variant_id, quantity FROM order_items WHERE order_id = :oid' );
+        $itemStmt->execute([':oid' => $orderId]);
+        $item = $itemStmt->fetchAll();
+        $restoreStock = $pdo->prepare('UPDATE product_variants SET stock = stock + :qty WHERE id = :vid');
+        foreach($item as $it){
+            if(!empty($it['variant_id'])){
+                $restoreStock->execute([
+                    ':qty' => (int)$it['quantity'],
+                    ':vid' => (int)$it['variant_id'],
+                ]);
+            }
+        }
+        // Cập nhật trạng thái đơn hàng
+        $upd = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = :id");
+        $upd->execute([':id'=> $orderId]);
+        $pdo->commit();
+       } catch(Throwable $e){
+        $pdo->rollBack();
+        throw $e;
+       }
+    }
 }

@@ -47,4 +47,7 @@ $router->get('/admin/san-pham', [AdminController::class, 'products']);
 $router->post('/admin/san-pham', [AdminController::class, 'storeProduct']);
 $router->get('/admin/san-pham/{id}/bien-the', [AdminController::class, 'variants']);
 $router->post('/admin/san-pham/{id}/bien-the', [AdminController::class, 'storeVariant']);
+$router->get('/tai-khoan/don-hang', [AccountController::class, 'orders']);
+$router->post('/tai-khoan/don-hang/huy', [AccountController::class, 'cancelOrder']);
+$router->post('/san-pham/{slug}/danh-gia', [ProductController::class, 'storeReview']);
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);

@@ -37,9 +37,12 @@
                                 <a class="btn btn-danger btn-sm" href="/admin">⚙️ Admin</a>
                             </li>
                         <?php endif; ?>
+                        <li class="nav-item">
+                            <a href="/tai-khoan/don-hang" class="btn btn-outline-light btn-sm">Đơn mua</a>
+                        </li>
                         <li class="nav-item text-light small ms-lg-2">
                             Chào, <strong><?= e($u['name']) ?></strong>
-                        </li>
+                        </li>  
                         <li class="nav-item">
                             <form method="POST" action="/dang-xuat" class="d-inline">
                                 <?= csrf_field() ?>

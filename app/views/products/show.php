@@ -131,7 +131,66 @@ $sellingPoints  = !empty($product['selling_points']) ? explode('|', $product['se
     </div>
   </div>
 </div>
-
+<!-- Đánh giá sản phẩm -->
+ <div class="card border-0 shadow-sm mt-4">
+  <div class="card-body">
+    <h2 class="h5 mb-3">
+      Đánh giá sản phẩm (<?= count($reviews) ?>)
+    </h2>
+    <?php if(current_user()): ?>
+      <form method="POST" action="/san-pham/<?= e($product['slug']) ?>/danh-gia" class="mb-4 pb-3 border-bottom">
+        <?= csrf_field() ?>
+        <div class="row g-2">
+          <div class="col-md-3">
+            <select name="rating" id="" class="form-select form-select-sm">
+              <option value="5">⭐⭐⭐⭐⭐(5 sao - Tuyệt vời)</option>
+              <option value="4">⭐⭐⭐⭐ (4 sao - Tốt)</option>
+              <option value="3">⭐⭐⭐ (3 sao - Bình thường)</option>
+              <option value="2">⭐⭐ (2 sao - Tệ)</option>
+              <option value="1">⭐ (1 sao - Rất tệ)</option>
+            </select>
+          </div>
+          <div class="col-md-7">
+            <input type="text" name="content" class="form-control form-control-sm" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm" required>
+          </div>
+          <div class="col-md-2 d-grid">
+            <button class="btn btn-primary btn-sm">
+              Gửi đánh giá
+            </button>
+          </div>
+        </div>
+      </form>
+      <?php else: ?>
+        <p class="small text-muted border-bottom pb-3">
+          Vui lòng <a href="/dang-nhap">đăng nhập</a> để gửi đánh giá
+        </p>
+        <?php endif; ?>
+        <?php if(empty($reviews)): ?>
+          <p class="text-muted small mb-0">
+            Chưa có đánh giá nào cho sản phẩm này
+          </p>
+          <?php else: ?>
+            <?php foreach ($reviews as $r): ?>
+              <div class="mb-3 pb-2 border-bottom">
+                <div class="d-flex justify-content-between">
+                  <strong>
+                    <?= e($r['user_name']) ?>
+                    <span class="ms-2">
+                      <?= str_repeat('⭐',(int)$r['rating']) ?>
+                    </span>
+                  </strong>
+                  <span class="text-muted small">
+                    <?= e($r['created_at']) ?>
+                  </span>
+                </div>
+                <p class="mb-0 small mt-1">
+                  <?= e($r['content']) ?>
+                </p>
+              </div>
+              <?php endforeach;  ?>
+              <?php endif; ?> 
+  </div>
+ </div>
 <!-- JavaScript đổi biến thể động -->
 <script>
 document.querySelectorAll('.variant-btn').forEach(btn => {

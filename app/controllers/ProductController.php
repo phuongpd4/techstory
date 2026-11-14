@@ -22,7 +22,7 @@ class ProductController extends Controller
         ]);
     }
 
-        public function show(string $slug): void
+    public function show(string $slug): void
     {
         $product = Product::findBySlug($slug);
         if (!$product) {
@@ -33,12 +33,31 @@ class ProductController extends Controller
 
         $variants = Product::variants((int)$product['id']);
         $specs    = Product::specs((int)$product['id']);
-
+        $reviews = Review::byProduct((int)$product['id']);
         $this->render('products/show', [
             'title'    => $product['name'],
             'product'  => $product,
             'variants' => $variants,
             'specs'    => $specs,
+            'reviews' => $reviews
         ]);
-    }    
+    }
+    // Nhân dữ liệu khi khách bấm gửi đánh giá
+    public function storeReview(string $slug):void
+    {
+        verify_csrf();
+        $user = current_user();
+        if(!$user){
+            $this->redirect('/dang-nhap');
+        }
+        $product = Product::findBySlug($slug);
+        $rating = (int)($_POST['rating'] ?? 5);
+        $content = trim($_POST['content'] ?? '');
+
+        if($product && $content !== ''){
+            Review::create((int)$product['id'],
+            (int)$user['id'], $rating, $content);
+        }
+        $this->redirect('/san-pham/' . $slug);
+    }
 }
