@@ -326,4 +326,25 @@ class Product
             throw $e;
         }
     }
+    // Truy vấn hiển thị nhiều góc ảnh và video mp4 theo id khách đang xem
+    public static function media(int $productId): array
+    {
+        $stmt = Database::pdo()->prepare(
+            "SELECT * FROM product_media WHERE product_id = :pid ORDER BY sort_order ASC, id ASC" 
+        );
+        $stmt->execute([':pid' => $productId]);
+        return $stmt->fetchAll();
+    }
+
+    public static function addMedia(int $productId, string $type, string $filePath, string $altText): void
+    {
+        $sql = "INSERT INTO product_media (product_id, type, file_path, alt_text, sort_order)
+        VALUES (:pid, :type, :path, :alt, 10)";
+        Database::pdo()->prepare($sql)->execute([
+            ':pid' => $productId,
+            ':type' => $type,
+            ':path' => $filePath,
+            ':alt' => $altText
+        ]);
+    }
 }

@@ -7,7 +7,7 @@ abstract class Controller
         extract($data);
         ob_start();
         require __DIR__ . '/../views/' . $view . '.php';
-        $content = ob_get_clean();
+        $content = ob_get_clean(); // Tổng hợp HTML
         require __DIR__ . '/../views/layouts/' . $layout . '.php';
     }
 

@@ -20,6 +20,26 @@
                 <div><strong>Phương thức thanh toán: </strong><?= $order['payment_method'] === 'qr' ? 'Chuyển khoản QR' : 'Thanh toán khi nhận hàng (COD)' ?>
             </div>
             </div>
+            <?php if($order['payment_method']=== 'qr'): ?>
+                <?php $qrInfo = urlencode('TECHSTORE ' . $order['order_code']);
+                $qrUrl = "https://img.vietqr.io/image/MB-0123456789-compact2.png?amount=" . (int)$order['total'] . "&addInfo={$qrInfo}&accountName=" . urlencode('CONG TY TECHSTORE'); ?>
+                <div class="alert alert-info text-center mb-4">
+                    <h6 class="fw-bold mb-2">
+                     🏦 Quét mã VietQR để thanh toán
+                    </h6>
+                    <img src="<?= $qrUrl ?>" alt="VietQR" class="img-fluid rounded shadow-sm mb-2" style="max-width:260px;">
+                    <div class="small">
+                        Số tiền: <strong class="text-danger">
+                            <?= money((int)$order['total']) ?>
+                        </strong>
+                    </div>
+                    <div class="small">
+                        Nội dung chuyển khoản: <strong>
+                            TECHSTORE <?= e($order['order_code']) ?>
+                        </strong>
+                    </div>
+                </div>
+                <?php endif; ?>
             <h6 class="fw-bold mb-2">Chi tiết sản phẩm đã đặt</h6>
             <table class="table table-sm small mb-3">
                 <thead class="table-light">

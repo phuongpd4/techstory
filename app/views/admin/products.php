@@ -145,14 +145,15 @@
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
                                         <img src="<?= e($p['image']) ?>" alt=""
-                                         style="width:44px; object-fit:cover" class="rounded"> 
-                                    </div>
+                                         style="width:44px; object-fit:cover; height:44px;" class="rounded"> 
+                                    
                                     <a href="/san-pham/<?= e($p['slug']) ?>"
                                      class="fw-semibold text-dark text-decoration-none">
                                      <?= e($p['name']) ?>
                                     </a>
                                     <div class="text-muted">
                                         <?= e($p['brand_name']) ?> . <?= e($p['category_name']) ?>
+                                    </div>
                                     </div>
                                 </td>
                                 <td>

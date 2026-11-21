@@ -50,4 +50,14 @@ $router->post('/admin/san-pham/{id}/bien-the', [AdminController::class, 'storeVa
 $router->get('/tai-khoan/don-hang', [AccountController::class, 'orders']);
 $router->post('/tai-khoan/don-hang/huy', [AccountController::class, 'cancelOrder']);
 $router->post('/san-pham/{slug}/danh-gia', [ProductController::class, 'storeReview']);
+$router->get('/yeu-thich', [AccountController::class, 'wishlist']);
+$router->post('/yeu-thich/toggle', [AccountController::class, 'toggleWishlist']);
+$router->get('/tai-khoan/dia-chi', [AccountController::class, 'addresses']);
+$router->post('/tai-khoan/dia-chi', [AccountController::class, 'storeAddress']);
+$router->post('/tai-khoan/dia-chi/xoa', [AccountController::class, 'deleteAddress']);
+$router->get('/so-sanh',[ProductController::class, 'compare']);
+$router->post('/admin/san-pham/{id}/media', [AdminController::class, 'storeMedia']);
+$router->get('/admin/ma-giam-gia', [AdminController::class, 'coupons']);
+$router->post('/admin/ma-giam-gia', [AdminController::class, 'storeCoupon']);
+$router->get('/sitemap.xml', [HomeController::class, 'sitemap']);
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);

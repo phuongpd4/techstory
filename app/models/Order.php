@@ -206,4 +206,15 @@ class Order
         throw $e;
        }
     }
+    public static function revenueByDay(): array
+    {
+        $sql = "SELECT DATE(created_at) AS day, SUM(total) AS revenue
+                        FROM orders
+                        WHERE status != 'cancelled'
+                        GROUP BY DATE(created_at)
+                        ORDER BY day ASC
+                        LIMIT 7";
+                        return Database::pdo()->query($sql)->fetchAll();
+                        
+    }
 }

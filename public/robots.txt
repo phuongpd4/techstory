@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /admin
+Disallow: /gio-hang
+Disallow: /thanh-toan
+Disallow: /tai-khoan
+Disallow: /yeu-thich
+Disallow: /dat-hang-thanh-cong
+Disallow: /dang-nhap
+
+Sitemap: http://localhost:8000/sitemap.xml

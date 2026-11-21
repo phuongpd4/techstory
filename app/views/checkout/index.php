@@ -6,7 +6,7 @@ $discount = $summary['discount'];
 $finalTotal = $summary['total'] + $shippingFee;
 ?>
 
-<h1 class=" mb-4">Thanh toán và đặt hàng</h1>
+<h1 class="h4 fw-bold mb-4">Thanh toán và đặt hàng</h1>
 <?php 
 if(!empty($error)): ?>
     <div class="alert alert-danger small"><?=  e($error); ?></div>
@@ -22,7 +22,7 @@ if(!empty($error)): ?>
            <h5 class="card-title mb-3">Thông tin người nhận</h5>
            <div class="mb-3">
                 <label class="form-label small fw-semibold">Họ và tên người nhận *</label>
-                <input type="text" name="receiver_name" class="form-control form-control-sm"
+                <input type="text" name="receiver_name" class="form-control"
                  required value="<?= e($old['receiver_name'] ?? $user['name'] ?? '') ?>">
            </div>
            <div class="mb-3">

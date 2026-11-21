@@ -33,4 +33,22 @@ class Coupon
 
         return min((int)$coupon['value'], $subtotal);
     }
+
+    public static function all(): array
+    {
+        return Database::pdo()->query("SELECT * FROM coupons ORDER BY id DESC")
+        ->fetchAll();
+    }
+    public static function create(array $d): void
+    {
+        $sql = "INSERT INTO coupons (code, type, value, min_order, usage_limit, status)
+        VALUES (:code, :type, :val, :min, :lim, 'active')";
+        Database::pdo()->prepare($sql)->execute([
+            ':code' => strtoupper(trim($d['code'])),
+            ':type' => in_array($d['type'] ?? '', ['percent', 'fixed'], true) ? $d['type'] : 'fixed',
+            ':val' => (int)$d['value'],
+            ':min' => (int)($d['min_order'] ?? 0),
+            ':lim' => (int)($d['usage_limit'] ?? 100),
+        ]);
+    }
 }

@@ -7,13 +7,21 @@ $statusLabel = [
     'cancelled' => ['Đã hủy', 'secondary'],
 ];?>
 
-<div class="d-flex justify-conten-between align-items-center mb-4">
+<div class="d-flex flex-wrap justify-conten-between align-items-center gap-2 mb-4">
     <h1 class="h4 fw-bold mb-0">
-        ⚙️ Bảng điều khiển Quản trị (Admin)
+        <i class="bi bi-sliders me-2"></i>
+        Bảng điều khiển Quản trị
     </h1>
-    <a href="/admin/san-pham" class="btn btn-primary btn-sm">
-        📱 Quản lý Sản phẩm
+    <div class="d-flex-gap-2">
+        <a href="/admin/san-pham" class="btn btn-dark btn-sm">
+        <i class="bi bi-box-seam me-1"></i>
+        Sản phẩm
     </a>
+    <a href="/admin/ma-giam-gia" class="btn btn-outline-dark btn-sm">
+        <i class="bi bi-ticket-perforated me-1"></i>   
+        Mã giảm giá
+    </a>
+    </div>
 </div>
 
 <?php if(!empty($msg)): ?>
@@ -72,10 +80,34 @@ $statusLabel = [
         </div>
     </div>
 </div>
+<!-- Biểu đồ doanh thu 7 ngày gần nhất -->
+ <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3">
+            Biểu đồ doanh thu theo ngày
+        </h6>
+        <canvas id="revChart" height="80"></canvas>
+    </div>
+ </div>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <script>
+    new Chart(document.getElementById('revChart'),
+{
+    type: 'bar',
+    data: {
+        labels: <?= json_encode(array_column($chartData ?? [], 'day')) ?>,
+        datasets: [{
+            label: 'Doanh thu (VNĐ)',
+            data: <?= json_encode(array_column($chartData ?? [], 'revenue')) ?>,
+            backgroundColor: '#09090b'
+        }]
+    }
+});
+ </script>
 <!-- Bảng quản lý đơn hàng -->
  <div class="card border-0 shadow-sm">
     <div class="card-header bg-white py-3">
-        <h5 class="card-title mg-0 fs-6 fw-bold">
+        <h5 class="card-title mb-0 fs-6 fw-bold">
             Danh sách đơn hàng gần đây
         </h5>
     </div>
@@ -114,7 +146,7 @@ $statusLabel = [
                         <div class="fw-semibold">
                             <?= e($o['receiver_name']) ?>
                         </div>
-                        <div class="fw-muted">
+                        <div class="text-muted">
                             <?= e($o['receiver_phone']) ?>
                         </div>
                     </td>
@@ -148,4 +180,3 @@ $statusLabel = [
         </table>
     </div>
  </div>
-</div>

@@ -1,14 +1,116 @@
+/*Biến màu, cách dùng : thuộc tính: var()*/
+:root{
+    --ts-canvas: #f8f9fa;
+    --ts-surface: #ffffff;
+    --ts-ink: #09090b;
+    --ts-muted: #52525b;
+    --ts-border: #e4e4e7;
+    --ts-price: #d70018;
+}
+
+
 body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--ts-canvas);
+    color: var(--ts-ink);
+    font-variant-numeric: tabular-nums; /*Các số thẳng cột*/
 }
 
 .card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 16px;
+    border: 1px solid var(--ts-border);
+    overflow: hidden;
+}
+.ts-price-box{
+    background: var(--ts-surface);
+    border: 1px solid var(--ts-border);
+    border-radius: 14px;
+    padding: 16px 20px;
+}
+.ts-thumb{
+    width: 64px;
+    height: 64px;
+    padding: 3px;
+    border-radius: 10px;
+    border: 1.5px solid var(--ts-border);
+    background: var(--ts-surface);    
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+.ts-thumb:hover, .ts-thumb.active{
+    border-color: var(--ts-ink);
 }
 
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+}
+.ts-navbar{
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px) ;
+    border-bottom: 1px solid var(--ts-border);
+}
+.hero-showroom{
+    background-color: #0c0c0e;
+    border-radius: 24px;
+    letter-spacing: -0.02em;
+}
+/*Banner*/
+.ts-pill{
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: var(--ts-surface);
+    border: 1px solid var(--ts-border);
+    color: var(--ts-ink);
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.ts-pill:hover{
+    background: var(--ts-ink);
+    color: #ffffff;
+    border-color: var(--ts-ink);
+}
+
+/* Đồng bộ toàn site tông màu Showroom*/
+.btn-primary{
+    background-color: var(--ts-ink);
+    border-color: var(--ts-ink);
+    color: #ffffff;
+}
+.btn-primary:hover{
+    background-color: #27272a;
+    border-color: #27272a;
+}
+.btn-outline-primary{
+    color: var(--ts-ink);
+    border-color: var(--ts-border);
+}
+.btn-outline-primary:hover{
+    background-color: var(--ts-ink);
+    border-color: var(--ts-ink);
+    color: #ffffff;
+}
+/* Đè lên bootstrap*/
+.text-danger{ color: var(--ts-price) !important;}
+.btn-primary, .btn-outline-primary{
+    --bs-btn-active-bg: #18181b;
+    --bs-btn-active-border-color: #18181b;
+    --bs-btn-focus-shadow-rgb: 9, 9, 11;
+}
+h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.02em;}
+/* Ảnh vuông hạn chết lệch layout */
+.card-img-top{
+    aspect-ratio: 1/1;
+    object-fit: contain;
+    background: #fff;
+    padding: 12px;
 }

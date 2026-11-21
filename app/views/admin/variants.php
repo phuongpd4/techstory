@@ -26,7 +26,7 @@
     </div>
 <?php endif; ?>
 <?php if(!empty($error)): ?>
-    <div class="alert alert-dark small">
+    <div class="alert alert-danger small">
         <?= e($error) ?>
     </div>
 <?php endif; ?>
@@ -37,8 +37,8 @@
         <form method="POST" action="/admin/san-pham/<?= (int)$product['id'] ?>/bien-the"
         enctype="multipart/form-data" class="card border-0 shadow-sm">
         <?= csrf_field() ?>
-        <div class="card-header bg-primary text-white py-2">
-            <h6 class="mg-0">
+        <div class="card-header bg-dark text-white py-2">
+            <h6 class="mb-0">
                 Thêm màu sắc/ dung lượng mới
             </h6>
         </div>
@@ -68,7 +68,7 @@
                     <label for="" class="form-label fw-semibold">
                         RAM
                     </label>
-                    <input type="text" name="ram" class="form-comtrol form-control-sm" placeholder="VD: 16GB">
+                    <input type="text" name="ram" class="form-control form-control-sm" placeholder="VD: 16GB">
                 </div>
                 <div class="col-6">
                     <label for="" class="form-label fw-semibold">
@@ -118,6 +118,21 @@
                 Lưu biến thể mới
             </button>
           </div>
+        </form>
+        <form method="POST" action="/admin/san-pham/<?= (int)$product['id'] ?>/media" enctype="multipart/form-data" class="card border-0 shadow-sm mt-3">
+                    <?= csrf_field() ?>
+                    <div class="card-header bg-dark text-white py-2">
+                        <h6 class="mb-0">
+                            Upload video, ảnh góc chụp phụ
+                        </h6>
+                    </div>
+                    <div class="card-body small">
+                        <input type="file" name="media_file" accept="video/mp4,image/*" class="form-control form-control-sm mb-2" required>
+                        <input type="text" name="alt_text" class="form-control form-control-sm mb-2" placeholder="Chú thích">
+                        <button type="submit" class="btn btn-dark btn-sm w-100">
+                            Tải lên sản phẩm
+                        </button> 
+                    </div>
         </form>
      </div>
 

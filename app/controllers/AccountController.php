@@ -51,4 +51,36 @@ class AccountController extends Controller
         }
         $this->redirect($_SERVER['HTTP_REFERER'] ?? '/yeu-thich');
     }
+
+    public function addresses():void
+    {
+        $user = current_user();
+        if(!$user){
+            $this->redirect('/dang-nhap');
+        }
+        $this->render('account/addresses', [
+            'title' => 'Địa chỉ nhận hàng',
+            'addresses' => Address::byUser((int)$user['id']),
+        ]);
+    }
+    public function storeAddress():void
+    {
+        verify_csrf();
+        $user = current_user();
+        if(!$user){
+            $this->redirect('/dang-nhap');
+        }
+        Address::create((int)$user['id'], $_POST);
+        $this->redirect('/tai-khoan/dia-chi');
+    }
+        public function deleteAddress(): void
+    {
+        verify_csrf();
+        $user = current_user();
+        if (!$user) {
+            $this->redirect('/dang-nhap');
+        }
+        Address::delete((int)($_POST['id'] ?? 0), (int)$user['id']);
+        $this->redirect('/tai-khoan/dia-chi');
+    }
 }

@@ -10,6 +10,7 @@ class AdminController extends Controller
             'title' => 'Quản trị hệ thống',
             'stats' => Order::stats(),
             'orders' => Order::all(),
+            'chartData' => Order::revenueByDay(),
             'msg' => $_SESSION['admin_msg'] ?? null,]);
 
          unset($_SESSION['admin_msg']);
@@ -178,5 +179,49 @@ class AdminController extends Controller
                 $_SESSION['admin_err'] = 'Lỗi: ' . $e->getMessage();
             }
             $this->redirect('/admin/san-pham/' . (int)$product['id'] . '/bien-the');
+    }
+    
+    // Kiểm tra định dạng
+    public function storeMedia(int $id) : void
+    {
+        require_admin();
+        verify_csrf();
+        $tmp = $_FILES['media_file']['tmp_name'] ?? '';
+        $mime = $tmp ? mime_content_type($tmp) : '';
+        $allowed = [
+            'video/mp4' => ['mp4', 'video'],
+            'image/jpeg' => ['jpg', 'image'],
+            'image/png' => ['png', 'image'],
+            'image/webp' => ['webp', 'image']
+        ];    
+        if(!isset($allowed[$mime])){
+            $_SESSION['admin_err'] = 'Chỉ chấp nhận video mp4 hoặc ảnh (jpg,png,webp)';
+            $this->redirect("/admin/san-pham/{$id}/bien-the");
+        }
+        [$ext, $type] = $allowed[$mime];
+        $name = "p{$id}_" . time() . ".{$ext}";
+        move_uploaded_file($tmp, ROOT . "/public/uploads/products/{$name}");
+        $alt = trim($_POST['alt_text'] ?? '') ?: "Media sản phẩm #{$id}";
+        Product::addMedia($id, $type, "/uploads/products/{$name}", $alt);
+        $_SESSION['admin_msg'] = 'Đã tải lên media thành công';
+        $this->redirect("/admin/san-pham/{$id}/bien-the");
+    }
+    public function coupons():void
+    {
+        require_admin();
+        $this->render('admin/coupons',[
+            'title' => 'Quản lý mã giảm giá',
+            'coupons' => Coupon::all(),
+        ]);
+    }
+    public function storeCoupon() : void
+    {
+        require_admin();
+        verify_csrf();
+        if(!empty($_POST['code']) && !empty($_POST['value']))
+            {
+                Coupon::create($_POST);
+            }
+            $this->redirect('/admin/ma-giam-gia');    
     }
 }
