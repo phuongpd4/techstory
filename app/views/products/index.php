@@ -75,34 +75,62 @@
       <span class="text-muted small">Tìm thấy <strong><?= count($products) ?></strong> sản phẩm</span>
     </div>
 
-    <?php if (empty($products)): ?>
-      <div class="alert alert-warning">
-        Không tìm thấy sản phẩm nào khớp với bộ lọc của bạn.
+  <?php if (empty($products)): ?>
+    <div class="card p-5 text-center">
+      <i class="bi bi-search fs-1 text-muted mb-2"></i>
+      <h2 class="h6 mb-1">
+        Không tìm thấy sản phẩm phù hợp
+      </h2>
+      <p class="small text-muted mb-3">
+        Thử thay đổi từ khóa hoặc nới rộng khoảng giá tìm kiếm
+      </p>
+      <div>
+        <a href="/san-pham" class="btn btn-dark btn-sm rouded-pill px-4">
+          Xem tất cả sản phẩm
+        </a>
       </div>
-    <?php else: ?>
-      <div class="row g-4">
-        <?php foreach ($products as $p): ?>
-          <div class="col-12 col-sm-6 col-md-4">
-            <div class="card h-100 shadow-sm">
-              <img src="<?= e($p['image']) ?>" class="card-img-top" alt="<?= e($p['name']) ?>">
-              <div class="card-body d-flex flex-column">
-                <div class="small text-muted mb-1"><?= e($p['brand_name']) ?> • <?= e($p['category_name']) ?></div>
-                <h5 class="card-title fs-6"><?= e($p['name']) ?></h5>
-                <p class="card-text small text-secondary flex-grow-1"><?= e($p['short_desc']) ?></p>
-                <div class="mt-2">
-                  <span class="fs-6 fw-bold text-danger"><?= money($p['sale_price'] ?? $p['price']) ?></span>
-                  <?php if (!empty($p['sale_price']) && $p['sale_price'] < $p['price']): ?>
-                    <del class="small text-muted ms-1"><?= money($p['price']) ?></del>
+      <?php else: ?>
+        <div class="row g-4">
+          <?php foreach ($products as $p): ?>
+            <?php $hasSale = !empty($p['sale_price']) && $p['sale_price'] < $p['price'];
+                  $percent = $hasSale ? round((1 - $p['sale_price'] / $p['price']) * 100) : 0
+             ?>
+             <div class="col-12 col-sm-6 col-md-4">
+              <div class="product-card h-100 d-flex flex-column">
+                <a href="/san-pham/<?= e($p['slug']) ?>" class="product-media">
+                  <?php if ($percent > 0): ?>
+                    <span class="discount-badge">-<?= $percent ?>%</span>
                   <?php endif; ?>
+                  <img src="<?= e($p['image']) ?>" alt="<?= e($p['name']) ?>">  
+                </a>
+                <div class="p-3 d-flex flex-column flex-grow-1">
+                  <div class="small text-muted mb-1">
+                    <?= e($p['brand_name']) ?> • <?= e($p['category_name']) ?>
+                  </div>
+                  <a href="/san-pham/<?= e($p['slug']) ?>" class="text-decoration-none text-dark">
+                    <h2 class="h6 mb-1">
+                      <?= e($p['name']) ?>
+                    </h2>
+                  </a>
+                  <p class="small text-secondary line-2 mb-3">
+                    <?= e($p['short_desc']) ?>
+                  </p>
+                  <div class="mt-auto">
+                    <span class="fs-6 fw-bold text-danger">
+                      <?= money($p['sale_price'] ?? $p['price']) ?>
+                    </span>
+                    <?php if ($hasSale): ?>
+                      <del class="small text-muted ms-1">
+                        <?= money($p['price']) ?>
+                      </del>
+                    <?php endif; ?>  
+                  </div>
                 </div>
               </div>
-              <div class="card-footer bg-white border-0 pt-0 pb-3">
-                <a href="/san-pham/<?= e($p['slug']) ?>" class="btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
-              </div>
-            </div>
-          </div>
-        <?php endforeach; ?>
-      </div>
-    <?php endif; ?>
+             </div>
+             <?php endforeach; ?>
+        </div>
+      <?php endif; ?>  
+    </div>  
   </div>
 </div>

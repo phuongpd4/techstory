@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1); // phát hiện lỗi truyền sai
-
+date_default_timezone_set('Asia/Ho_Chi_Minh');// ép múi giờ gmt+7
 // Nếu trình duyệt hỏi file tĩnh có thật (css, js, ảnh) thì trả file đó luôn
 if (PHP_SAPI === 'cli-server' && is_file(__DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))) {
     return false;

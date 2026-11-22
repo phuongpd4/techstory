@@ -92,8 +92,42 @@
         <?= $content ?>
     </main>
 
-    <footer class="bg-light py-3 mt-auto text-center text-muted border-top">
-        © <?= date('Y') ?> TechStore - Hệ thống bán lẻ đồ công nghệ
+    <footer class="footer-ts py-5 mt-5">
+        <div class="container">
+            <div class="row g-4 small">
+                <div class="col-md-5">
+                    <div class="fw-bold text-dark fs-6 mb-2">
+                        <i class="bi bi-cpu-fill me-1"></i>TechStore
+                    </div>
+                    <p class="mb-2">Hệ thống bán lẻ điện thoại, laptop, máy tính bảng và phụ kiện công nghệ chính hãng. Trải nghiệm mua sắm minh bạch, tối giản.</p>
+                    <div><i class="bi bi-shield-check me-1"></i>
+                    Bảo hành chính hãng <i class="bi bi-qr-code-scan ms-2 me-1"></i>
+                    Hỗ trợ COD và VietQR</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="fw-bold text-dark mb-2">Khám phá</div>
+                    <ul class="list-unstyled d-grid gap-1 mb-0">
+                        <li><a href="/san-pham">Tất cả sản phẩm</a></li>
+                        <li><a href="/san-pham?category=dien-thoai">Điện thoại</a></li>
+                        <li><a href="/san-pham?category=laptop">Laptop</a></li>
+                        <li><a href="/so-sanh">So sánh cấu hình</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="fw-bold text-dark mb-2">Tài khoản và hỗ trợ</div>
+                    <ul class="list-unstyled d-grid gap-1 mb-0">
+                        <li><a href="/gio-hang">Giỏ hàng của bạn</a></li>
+                        <li><a href="/tai-khoan/don-hang">Tra cứu đơn hàng</a></li>
+                        <li><a href="/yeu-thich">Sản phẩm yêu thích</a></li>
+                        <li><a href="/tai-khoan/dia-chi">Sổ địa chỉ nhận hàng</a></li>
+                    </ul>
+
+                </div>
+            </div>
+            <div class="border-top mt-4 pt-3 text-center small">
+                @<?= date('Y') ?>  TechStore. 
+            </div>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

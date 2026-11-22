@@ -164,7 +164,25 @@ class Order
 
     // Lấy danh sách đơn hàng của 1 khách hàng
     public static function byUser(int $userID) : array {
-        $stmt = Database::pdo()->prepare('SELECT * FROM orders WHERE user_id = :uid ORDER BY id DESC');
+
+        $sql = "SELECT o.*,
+        (SELECT COUNT(*)
+        FROM order_items oi
+        WHERE oi.order_id = o.id) AS item_count,
+        (SELECT oi.product_name 
+        FROM order_items oi 
+        WHERE oi.order_id = o.id LIMIT 1) AS first_product,
+        (SELECT pm.file_path
+        FROM order_items oi
+        JOIN product_variants pv ON pv.id = oi.variant_id
+        LEFT JOIN product_media pm ON pm.product_id = pv.product_id
+        WHERE oi.order_id = o.id
+        ORDER BY(pm.variant_id = pv.id) DESC,
+        pm.sort_order ASC LIMIT 1) AS first_image
+        FROM orders o
+        WHERE o.user_id = :uid
+        ORDER BY o.id DESC";
+        $stmt = Database::pdo()->prepare($sql);
         $stmt->execute([':uid' => $userID]);
         return $stmt->fetchAll();
     }

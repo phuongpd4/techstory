@@ -31,51 +31,59 @@ $statusLabel = [
 <!-- Thống kê tổng quan -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm bg-primary text-white">
-            <div class="card-body">
-                <div class="small opacity-75">
-                    Doanh thu tạm tính
-                </div>
-                <div class="fs-5 fw-bold mt-1">
-                    <?=  money($stats['total_revenue']) ?>
-                </div>
+        <div class="kpi-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="kpi-icon">
+                    <i class="bi bi-currency-dollar"></i>
+                </span>
+            </div>
+            <div class="fs-5 fw-bold text-danger">
+                <?= money($stats['total_revenue']) ?>
             </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm bg-success text-white">
-            <div class="card-body">
-                <div class="small opacity-75">
+        <div class="kpi-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small text-muted fw-medium">
                     Tổng đơn hàng
-                </div>
-                <div class="fs-5 fw-bold mt-1">
-                    <?= (int)$stats['total_orders'] ?> đơn
-                </div>
+                </span>
+                <span class="kpi-icon">
+                    <i class="bi bi-bag-check"></i>
+                </span>
+            </div>
+            <div class="fs-5 fw-bold">
+                <?= (int)$stats['total_orders'] ?> đơn
             </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm bg-dark text-white">
-            <div class="card-body">
-                <div class="small opacity-75">
+        <div class="kpi-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small text-muted fw-medium">
                     Tổng sản phẩm
-                </div>
-                <div class="fs-5 fw-bold mt-1">
-                    <?= (int)$stats['total_products'] ?> mẫu
-                </div>
+                </span>
+                <span class="kpi-icon">
+                    <i class="bi bi-box-seam"></i>
+                </span>
+            </div>
+            <div class="fs-5 fw-bold">
+                <?= (int)$stats['total_products'] ?> Mẫu
             </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm bg-secondary text-white">
-            <div class="card-body">
-                <div class="small opacity-75">
+        <div class="kpi-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small text-muted fw-medium">
                     Khách hàng
-                </div>
-                <div class="fs-5 fw-bold mt-1">
-                    <?= (int)$stats['total_users'] ?> 
-                    tài khoản
-                </div>
+                </span>
+                <span class="kpi-icon">
+                    <i class="bi bi-people"></i>
+                </span>
+            </div>
+            <div class="fs-5 fw-bold">
+                <?= (int)$stats['total_users'] ?>Tài khoản
             </div>
         </div>
     </div>
@@ -111,7 +119,7 @@ $statusLabel = [
             Danh sách đơn hàng gần đây
         </h5>
     </div>
-    <div class="table-responsive">
+    <div class="table-responsive d-none d-md-block">
         <table class="table align-middle small mb-0">
             <thead class="table-light">
                 <tr>
@@ -135,7 +143,7 @@ $statusLabel = [
                     <?php [$label,$badge] = $statusLabel[$o['status']] ?? [$o['status'],'secondary']; ?>  
                   <tr>
                     <td>
-                        <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="fw-bold text-decoration-none">
+                        <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="fw-bold text-dark text-decoration-none">
                            <?= e($o['order_code']) ?> 
                         </a>
                         <div class="text-muted">
@@ -178,5 +186,45 @@ $statusLabel = [
                   <?php endif; ?>   
             </tbody>
         </table>
+        
+    </div>
+<!-- Đơn hàng mobile -->
+    <div class="d-md-none p-3 d-grid gap-3">
+       <?php foreach($orders as $o): ?>
+        <?php [$label, $badge] = $statusLabel[$o['status']] ?? [$o['status'], 'secondary']; ?>
+        <div class="border rounded-3 p-3 bg-white">
+            <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+                <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="fw-bold text-dark text-decoration-none">
+                    <?= e($o['order_code']) ?>
+                </a>
+                <span class="badge bg-<?= $badge ?>">
+                    <?= $label ?>
+                </span>
+            </div>
+            <div class="small fw-semibold">
+                <?= e($o['receiver_name']) ?> • <?= e($o['receiver_phone']) ?> 
+            </div>
+            <div class="small text-muted mb-2">
+                <?= e($o['shipping_addr']) ?>
+            </div>
+            <div class="fw-bold text-danger mb-2">
+                <?= money($o['total']) ?>
+            </div>
+            <form method="POST" action="/admin/don-hang/trang-thai" class="d-flex gap-2">
+                <?= csrf_field() ?>
+                <input type="hidden" name="order_id" value="<?= (int)$o['id'] ?>">
+                <select name="status" id="" class="form-select form-select-sm">
+                    <?php foreach ($statusLabel as $key => [$text]):  ?>
+                        <option value="<?= $key ?>" <?= $o['status'] === $key ? 'selected' : '' ?>>
+                            <?= $text ?>
+                        </option>
+                    <?php endforeach; ?>    
+                </select>
+                <button type="submit" class="btn btn-sm btn-dark text-nowrap">
+                    Lưu
+                </button>
+            </form>
+        </div>
+        <?php endforeach; ?>                             
     </div>
  </div>

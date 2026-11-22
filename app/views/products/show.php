@@ -4,11 +4,22 @@ $sellingPoints  = !empty($product['selling_points']) ? explode('|', $product['se
 ?>
 
 <!-- Đường dẫn Breadcrumb -->
-<nav aria-label="breadcrumb" class="mb-3">
-  <ol class="breadcrumb small">
-    <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-    <li class="breadcrumb-item"><a href="/san-pham?category=<?= e($product['category_slug']) ?>"><?= e($product['category_name']) ?></a></li>
-    <li class="breadcrumb-item active"><?= e($product['name']) ?></li>
+<nav aria-label="breadcrumb" class="mb-4 breadcrumb-ts"> 
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item">
+      <a href="/">
+        <i class="bi bi-house-door me-1"></i>
+        Trang chủ
+      </a>
+    </li>
+    <li class="breadcrumb-item">
+      <a href="/san-pham?category=<?= e($product['category_slug']) ?>">
+        <?= e($product['category_name']) ?>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+      <?= e($product['name']) ?>
+    </li>
   </ol>
 </nav>
 
@@ -158,7 +169,8 @@ $sellingPoints  = !empty($product['selling_points']) ? explode('|', $product['se
     <div class="card border-0 shadow-sm">
       <div class="card-body">
         <h2 class="h5 mb-3">Thông số kỹ thuật</h2>
-        <table class="table table-sm table-striped mb-0 small">
+        <div class="table-responsive">
+          <table class="table table-sm table-striped mb-0 small">
           <tbody>
             <?php foreach ($specs as $s): ?>
               <tr>
@@ -168,6 +180,7 @@ $sellingPoints  = !empty($product['selling_points']) ? explode('|', $product['se
             <?php endforeach; ?>
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   </div>
@@ -213,7 +226,7 @@ $sellingPoints  = !empty($product['selling_points']) ? explode('|', $product['se
           <?php else: ?>
             <?php foreach ($reviews as $r): ?>
               <div class="mb-3 pb-2 border-bottom">
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between flex-wrap gap-1">
                   <strong>
                     <?= e($r['user_name']) ?>
                     <span class="ms-2">

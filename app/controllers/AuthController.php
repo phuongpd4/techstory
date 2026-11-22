@@ -41,7 +41,9 @@ class AuthController extends Controller
             'email' => $user['email'],
             'role'  => $user['role'],
         ];
-
+        if($user['role'] === 'admin'){
+            unset($_SESSION['cart'], $_SESSION['coupon_code']);
+        }
         $this->redirect('/');
     }
 
@@ -93,7 +95,7 @@ class AuthController extends Controller
     public function logout(): void
     {
         verify_csrf();
-        unset($_SESSION['user']);
+        unset($_SESSION['user'], $_SESSION['cart'], $_SESSION['coupon_code']);
         session_regenerate_id(true);
         $this->redirect('/');
     }

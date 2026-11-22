@@ -34,7 +34,7 @@ $statusLabels = [
         </div>
     </div>
 <?php else: ?>
-    <div class="card border-0 shadow-sm">
+    <div class="card d-none d-md-block">
         <div class="table-responsive">
             <table class="table align-middle small mb-0">
                 <thead class="table-light">
@@ -52,7 +52,7 @@ $statusLabels = [
                     <?php [$label, $badge] = $statusLabels[$o['status']] ?? [$o['status'], 'secondary']; ?>
                     <tr>
                         <td>
-                            <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="fw-bold text-decoration-none">
+                            <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="fw-bold text-dark text-decoration-none">
                                 <?= e($o['order_code']) ?>
                             </a>
                         </td>
@@ -78,7 +78,7 @@ $statusLabels = [
                                 <?= $label ?>
                             </span>
                         </td>
-                        <td class="text-end">
+                        <td class="text-end text-nowrap">
                             <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="btn btn-sm btn-outline-primary">
                                 Chi tiết
                             </a>
@@ -97,5 +97,46 @@ $statusLabels = [
                 </tbody>
             </table>
         </div>
+    </div>
+        <!-- Giao diện thẻ dọc cho Điện thoại (Mobile) -->
+    <div class="d-md-none d-grid gap-3">
+        <?php foreach ($orders as $o): ?>
+            <?php [$label, $badge] = $statusLabels[$o['status']] ?? [$o['status'], 'secondary']; ?>
+            <div class="card p-3">
+                <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+                    <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="fw-bold text-dark text-decoration-none"><?= e($o['order_code']) ?></a>
+                    <span class="badge bg-<?= $badge ?>"><?= $label ?></span>
+                </div>
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <img src="<?= e($o['first_image']) ?>" alt="Ảnh sản phẩm" style="width:56px;height:56px;object-fit:contain" class="rounded border bg-white p-1 flex-shrink-0">
+                    <div class="small">
+                        <div class="fw-semibold text-dark">
+                            <?= e($o['first_product'] ?? 'Đơn hàng TechStore') ?>
+                        </div>
+                        <?php if((int)($o['item_count'] ?? 1) > 1): ?>
+                            <div class="text-muted">và
+                                <?= (int)$o['item_count'] - 1 ?> sản phẩm khác
+                            </div>
+                        <?php endif; ?>    
+                    </div>
+                </div>
+                <div class="small text-muted mb-1"><i class="bi bi-clock me-1"></i><?= date('d/m/Y H:i', strtotime($o['created_at'])) ?></div>
+                <div class="small fw-semibold"><?= e($o['receiver_name']) ?> • <?= e($o['receiver_phone']) ?></div>
+                <div class="small text-muted mb-2"><?= e($o['shipping_addr']) ?></div>
+                <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                    <span class="fw-bold text-danger"><?= money($o['total']) ?></span>
+                    <div class="d-flex gap-2">
+                        <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="btn btn-sm btn-outline-dark">Chi tiết</a>
+                        <?php if ($o['status'] === 'pending'): ?>
+                            <form method="POST" action="/tai-khoan/don-hang/huy" onsubmit="return confirm('Bạn chắc chắn muốn hủy đơn hàng này?');">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="order_id" value="<?= (int)$o['id'] ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Hủy đơn</button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
     <?php endif; ?>    

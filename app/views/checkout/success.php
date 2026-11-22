@@ -3,7 +3,7 @@
         <div class="card border-0 shadow-sm p-4">
             <div class="text-center mb-4">
                 <div class="display-4 mb-2">
-                    🎉
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
                 </div>
                 <h1 class="h4 fw-bold text-success">
                     Đặt hàng thành công!
@@ -11,7 +11,7 @@
                 <p class="text-muted mb-1">
                     Mã đơn hàng của bạn là: <strong class="text-dark"><?= e($order['order_code']) ?></strong>
                 </p>
-                <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                  
             </div> 
             <div class="bg-light p-3 rounded small mb-4">
                 <div><strong>Người nhận: </strong><?= e($order['receiver_name']) ?></div>
@@ -20,24 +20,44 @@
                 <div><strong>Phương thức thanh toán: </strong><?= $order['payment_method'] === 'qr' ? 'Chuyển khoản QR' : 'Thanh toán khi nhận hàng (COD)' ?>
             </div>
             </div>
-            <?php if($order['payment_method']=== 'qr'): ?>
+                        <?php if ($order['payment_method'] === 'qr' && $order['payment_status'] === 'pending' && $order['status'] === 'pending'): ?>
                 <?php $qrInfo = urlencode('TECHSTORE ' . $order['order_code']);
-                $qrUrl = "https://img.vietqr.io/image/MB-0123456789-compact2.png?amount=" . (int)$order['total'] . "&addInfo={$qrInfo}&accountName=" . urlencode('CONG TY TECHSTORE'); ?>
-                <div class="alert alert-info text-center mb-4">
+                $qrUrl = "https://img.vietqr.io/image/ACB-27046651-compact2.png?amount=" . (int)$order['total'] . "&addInfo={$qrInfo}&accountName=" . urlencode('CONG TY TECHSTORE'); ?>
+                <div class="border rounded-4 p-4 text-center mb-4 bg-white">
                     <h6 class="fw-bold mb-2">
-                     🏦 Quét mã VietQR để thanh toán
+                        <i class="bi bi-qr-code-scan me-1"></i>
+                        Quét mã VietQR để thanh toán
                     </h6>
-                    <img src="<?= $qrUrl ?>" alt="VietQR" class="img-fluid rounded shadow-sm mb-2" style="max-width:260px;">
-                    <div class="small">
-                        Số tiền: <strong class="text-danger">
+                    <img src="<?= e($qrUrl) ?>" alt="VietQR" class="img-fluid rounded border p-2 mb-3" style="max-width: 240px;">
+                    <div class="small">Số tiền:
+                        <strong class="text-danger">
                             <?= money((int)$order['total']) ?>
                         </strong>
                     </div>
-                    <div class="small">
-                        Nội dung chuyển khoản: <strong>
+                    <div class="small text-muted">
+                        Nội dung chuyển khoản:
+                        <strong class="text-dark">
                             TECHSTORE <?= e($order['order_code']) ?>
                         </strong>
                     </div>
+                    <?php $timePayment = strtotime($order['created_at']) + 900; ?>
+                    <div class="small text-danger fw-semibold mt-2" id="qrTimer"></div>
+                    <div class="text-muted mt-1" style="font-size: 0.78rem;">
+                        Vui lòng hoàn tất chuyển khoản trong 15 phút để xác nhận đơn hàng. Quá hạn đơn hàng sẽ tự hủy!
+                    </div>
+                    <script>
+                       ( function(){
+                            const end = <?= $timePayment ?> * 1000,
+                            el = document.getElementById('qrTimer');
+                            const tick = () => {
+                                const s = Math.max(0, Math.floor((end - Date.now()) / 1000));
+                                el.textContent = s > 0
+                                 ? `Thời gian giữ đơn còn lại: ${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`
+                            : 'Đã hết 15 phút giữ đơn — Vui lòng liên hệ cửa hàng nếu bạn đã chuyển khoản.';
+                            }; 
+                             tick(); setInterval(tick, 1000);
+                        })();
+                    </script>
                 </div>
                 <?php endif; ?>
             <h6 class="fw-bold mb-2">Chi tiết sản phẩm đã đặt</h6>
@@ -75,8 +95,9 @@
                     Tổng cộng: <?= money($order['total']) ?>
                 </div>
             </div>
-            <div class="text-center mt-4">
-                <a href="/san-pham" class="btn btn-primary">Tiếp tục mua sắm</a>
+            <div class="d-flex justify-content-center gap-2 mt-4">
+                <a href="/tai-khoan/don-hang" class="btn btn-outline-dark">Xem đơn hàng của tôi</a>
+                <a href="/san-pham" class="btn btn-dark">Tiếp tục mua sắm</a>
             </div>
         </div>
     </div>

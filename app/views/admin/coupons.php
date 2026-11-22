@@ -26,12 +26,13 @@
             <input type="number" name="value" class="form-control form-control-sm mb-2" placeholder="giá trị giảm" required>
             <input type="number" name="min_order" class="form-control form-control-sm mb-2" placeholder="Đơn tối thiểu" value="0">
             <input type="number" name="usage_limit" class="form-control form-control-sm mb-3" placeholder="Giới hạn lượt dùng" value="100">
-            <button type="submit" class="btn btn-primary btn-sm w-100">Lưu mã giảm giá</button>
+            <button type="submit" class="btn btn-dark btn-sm w-100">Lưu mã giảm giá</button>
         </form>
     </div>
     <div class="col-md-8">
         <div class="card border-0 shadow-sm">
-            <table class="table align-middle small mb-0">
+            <div class="table-responsive">
+                <table class="table align-middle small mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>Mã Code</th>
@@ -61,6 +62,7 @@
                     <?php endforeach; ?>    
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>

@@ -41,15 +41,33 @@ if(!empty($error)): ?>
             value="<?= e($old['note'] ?? '') ?>" placeholder="Giao giờ hành chính, gọi trước khi giao...">
            </div>
 
-           <h6 class="fw-bold mt-4 mb-2">Phương thức thanh toán</h6>
-           <div class="form-check mb-2">
-            <input class="form-check-input" type="radio" name="payment_method" id="payCod" value="cod" checked>
-            <label class="form-check-label" for="payCod">💵 Thanh toán khi nhận hàng (COD)</label>
-           </div>
-              <div class="form-check mb-2">
-                <input class="form-check-input" type="radio" name="payment_method" id="payQr" value="qr">
-                <label class="form-check-label" for="payQr">🏦 Chuyển khoản ngân hàng (Mã VietQR)</label>
-              </div>
+          <h6 class="fw-bold mt-4 mb-3">Phương thức thanh toán</h6>
+          <div class="d-grid gap-2">
+            <label for="payCod" class="ratio-card">
+                <input type="radio" class="form-check-input mt-0" name="payment_method" id="payCod" value="cod" checked>
+                <i class="bi bi-cash-stack fs-4 text-dark"></i>
+                <div>
+                    <div class="fw-semibold small">
+                        Thanh toán khi nhận hàng (COD)
+                    </div>
+                    <div class="text-muted" style="font-size: 0.78rem;">
+                        Kiểm tra sản phẩm trước khi thanh toán tiền mặt
+                    </div>
+                </div>
+            </label>
+            <label for="payQr" class="ratio-card">
+                <input type="radio" class="form-check-input mt-0" name="payment_method" id="payQr" value="qr">
+                <i class="bi bi-qr-code-scan fs-4 text-dark"></i>
+                <div>
+                    <div class="fw-semibold small">
+                        Chuyển khoản ngân hàng (Mã VietQR)
+                    </div>
+                    <div class="text-muted" style="font-size:0.78rem;">
+                        Tự động điền sẵn số tiền và mã đơn hàng, xác nhận nhanh chóng
+                    </div>
+                </div>
+            </label>
+          </div>
         </div>
     </div>
  </div>
@@ -62,12 +80,15 @@ if(!empty($error)): ?>
             <ul class="list-group list-group-flush mb-3">
                 <?php
                     foreach ($items as $item): ?>
-                <li class="list-group-item px-0 d-flex justify-content-between align-items-center small">
+                <li class="list-group-item px-0 d-flex justify-content-between align-items-center gap-2 small">
+                    <div class="d-flex.align-items-center gap-2">
+                        <img src="<?= e($item['image']) ?>" alt="" style="width:48px;height:48px;object-fit:contain;" class="rounded border bg-white p-1">
                     <div>
                         <div class="fw-semibold"><?= e($item['product_name']) ?>(x<?= (int)$item['qty'] ?>)</div>
                         <div class="text-muted"><?= e($item['color']) ?><?= !empty($item['storage']) ? '. ' . e($item['storage']) : '' ?></div>
+                    </div>    
                     </div>
-                    <span class="fw-semibold"><?= money($item['line_total']) ?></span>
+                    <span class="fw-semibold text-nowrap"><?= money($item['line_total']) ?></span>
                 </li>
                 <?php endforeach; ?>
             </ul>
@@ -88,8 +109,8 @@ if(!empty($error)): ?>
                 <span>Tổng thanh toán:</span>
                 <span class="text-danger"><?= money($finalTotal) ?></span>
             </div>
-            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">✅ Xác nhận đặt hàng</button>
-            <a href="/gio-hang" class="btn btn-link btn-sm w-100 mt-2 text-decoration-none">← Quay lại giỏ hàng</a>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold"><i class="bi bi-check2-circle me-1"></i> Xác nhận đặt hàng</button>
+            <a href="/gio-hang" class="btn btn-outline-dark btn-sm w-100 mt-2 text-decoration-none">← Quay lại giỏ hàng</a>
         </div>
     </div>
  </div>

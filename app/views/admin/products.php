@@ -128,7 +128,7 @@
                     Danh sách sản phẩm trong kho (<?= count($products) ?>)
                 </h6>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive d-none d-md-block">
                 <table class="table align-middle small mb-0">
                     <thead class="table-light">
                         <tr>
@@ -180,6 +180,37 @@
                     </tbody>
                 </table>
             </div>
+                        <!-- Sản phẩm giao diện mobile -->
+            <div class="d-md-none p-3 d-grid ap-3">
+                <?php foreach($products as $p): ?>
+                    <div class="border rounded-3 p-3 bg-white">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <img src="<?= e($p['image']) ?>" alt="" style="width: 52px;height: 52px;object-fit:contain;" class="rounded border bg-white p-1 flex-shrink-0">
+                            <div class="small">
+                                <a href="/san-pham/<?= e($p['slug']) ?>" class="fw-bold text-dark text-decoration-none d-block">
+                                    <?= e($p['name']) ?>
+                                </a>
+                                <span class="text-muted">
+                                    <?= e($p['brand_name']) ?> • <?= e($p['category_name']) ?>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center small pt-2 border-top">
+                            <div>
+                                <div class="fw-bold text-danger">
+                                    <?= money($p['sale_price']) ?: $p['price'] ?>
+                                </div>
+                                <span class="text-muted">
+                                    Kho: <?= (int)$p['stock'] ?> • <code> <?= e($p['sku']) ?> </code>
+                                </span>
+                            </div>
+                            <a href="/admin/san-pham/<?= (int)$p['id'] ?>/bien-the" class="btn btn-sm btn-dark">
+                                Biến thể / Ảnh
+                            </a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>    
+            </div>             
         </div>
       </div>
 </div>

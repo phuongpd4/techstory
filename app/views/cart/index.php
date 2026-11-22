@@ -6,7 +6,7 @@ $total    = $summary['total'];
 $coupon   = $summary['coupon'];
 ?>
 
-<h1 class="h4 fw-bold mb-4">🛒 Giỏ hàng của bạn</h1>
+<h1 class="h4 fw-bold mb-4"><i class="bi bi-bag me-2"></i> Giỏ hàng của bạn</h1>
 
 <?php if (!empty($msg)): ?>
   <div class="alert alert-info small"><?= e($msg) ?></div>
@@ -26,7 +26,7 @@ $coupon   = $summary['coupon'];
       <form method="POST" action="/gio-hang/cap-nhat" class="card border-0 shadow-sm">
         <?= csrf_field() ?>
         <div class="table-responsive">
-          <table class="table align-middle mb-0">
+          <table class="table align-middle mb-0" style="min-width:580px;">
             <thead class="table-light small">
               <tr>
                 <th>Sản phẩm</th>
@@ -41,7 +41,7 @@ $coupon   = $summary['coupon'];
                 <tr>
                   <td>
                     <div class="d-flex align-items-center gap-3">
-                      <img src="<?= e($item['image']) ?>" alt="" style="width:60px;height:60px;object-fit:cover;" class="rounded">
+                      <img src="<?= e($item['image']) ?>" alt="" style="width:60px;height:60px;object-fit:contain;background:#fff;padding:4px;" class="rounded">
                       <div>
                         <a href="/san-pham/<?= e($item['product_slug']) ?>" class="fw-semibold text-dark text-decoration-none">
                           <?= e($item['product_name']) ?>
@@ -64,15 +64,19 @@ $coupon   = $summary['coupon'];
                   </td>
                   <td class="fw-bold text-danger"><?= money($item['line_total']) ?></td>
                   <td class="text-end">
-                    <button type="submit" form="removeForm-<?= (int)$item['variant_id'] ?>" class="btn btn-sm btn-outline-danger">✕</button>
+                    <button type="submit" form="removeForm-<?= (int)$item['variant_id'] ?>" class="btn btn-sm btn-outline-danger">
+                      <i class="bi bi-trash3"></i>
+                    </button>
                   </td>
                 </tr>
               <?php endforeach; ?>
             </tbody>
           </table>
         </div>
-        <div class="card-footer bg-white d-flex justify-content-between">
-          <a href="/san-pham" class="btn btn-outline-secondary btn-sm">← Mua thêm sản phẩm</a>
+        <div class="card-footer flex-wrap gap-2 bg-white d-flex justify-content-between">
+          <a href="/san-pham" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Mua thêm sản phẩm
+          </a>
           <button type="submit" class="btn btn-dark btn-sm">Cập nhật số lượng</button>
         </div>
       </form>
@@ -119,7 +123,8 @@ $coupon   = $summary['coupon'];
             <span>Tổng cộng:</span>
             <span class="text-danger"><?= money($total) ?></span>
           </div>
-          <a href="/thanh-toan" class="btn btn-primary w-100">Tiến hành đặt hàng →</a>
+          <a href="/thanh-toan" class="btn btn-primary w-100">
+            Tiến hành đặt hàng<i class="bi bi-arrow-right ms-1"></i></a>
         </div>
       </div>
     </div>
