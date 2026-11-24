@@ -1,0 +1,9 @@
+RewriteEngine On
+
+#Chặn truy cập trực tiếp vào thư mục code nội bộ app/
+RewriteRule ^app/ - [F,L]
+
+#Tự động đẩy toàn bộ truy cập vào thư mục pulic/
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]
+

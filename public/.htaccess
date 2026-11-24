@@ -1,0 +1,6 @@
+RewriteEngine On
+
+#Nếu không phải file tĩnh(css, jpg, mp4 ...) và không phải thư mục có thật -> chạy qua index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]

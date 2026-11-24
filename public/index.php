@@ -1,6 +1,12 @@
 <?php
 declare(strict_types=1); // phát hiện lỗi truyền sai
 date_default_timezone_set('Asia/Ho_Chi_Minh');// ép múi giờ gmt+7
+//Tự ẩn lỗi PHP khi chạy trên tên miền thật
+$isLocal = in_array($_SERVER['HTTP_HOST'] ?? '',
+['localhost:8000', '127.0.0.1:8000'], true);
+ini_set('display_errors', $isLocal ? '1' : '0');
+error_reporting($isLocal ? E_ALL : 0);
+
 // Nếu trình duyệt hỏi file tĩnh có thật (css, js, ảnh) thì trả file đó luôn
 if (PHP_SAPI === 'cli-server' && is_file(__DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))) {
     return false;
