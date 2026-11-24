@@ -61,26 +61,63 @@
                 </div>
                 <?php endif; ?>
             <h6 class="fw-bold mb-2">Chi tiết sản phẩm đã đặt</h6>
-            <table class="table table-sm small mb-3">
-                <thead class="table-light">
-                    <tr>
-                        <th>Sản phẩm: </th>
-                        <th>Phiên bản: </th>
-                        <th>Số lượng: </th>
-                        <th class="text-end">Thành tiền</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php foreach($order['items'] as$it): ?>
-                    <tr>
-                        <td><?= e($it['product_name']) ?></td>
-                        <td><?= e($it['variant_info']) ?>(<code><?= e($it['sku']) ?></code>)</td>
-                        <td><?= (int)$it['quantity'] ?></td>
-                        <td class="text-end"><?= money($it['price']* $it['quantity']) ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <!-- Bảng chi tiết cho PC -->
+             <div class="table-responsive d-none d-md-block mb-3">
+                 <table class="table table-sm align-middle small mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <td>Sản phẩm</td>
+                            <td>Phiên bản</td>
+                            <td>Mã phiên bản</td>
+                            <td>Số lượng</td>
+                            <td class="text-end">Thành tiền</td>
+                        </tr>    
+                    </thead>
+                    <tbody>
+                        <?php foreach($order['items'] as $it): ?>
+                            <tr>
+                                <td>
+                                    <div class="d-lex align-items-center gap-2">
+                                        <img src="<?= e($it['image']) ?>" alt=""
+                                        style="width: 44px;height: 44px;object-fit:contain;"
+                                        class="rounded border bg-white p-1 flex-shrink-0">
+                                        <span class="fw-semibold">
+                                            <?= e($it['product_name']) ?>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td><?= e($it['variant_info']) ?></td>
+                                <td>(<code><?= e($it['sku']) ?></code>)</td>
+                                <td><?= (int)$it['quantity'] ?></td>
+                                <td class="text-end fw-semibold">
+                                    <?= money($it['price'] * $it['quantity']) ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>    
+                    </tbody>
+                 </table>           
+             </div>  
+            <!-- Danh sách thẻ dọc mobile -->     
+            <div class="d-md-none d-grid gap-2 mb-3">
+                <?php foreach ($order['items'] as $it): ?>
+                <div class="border rounded-3 p-2 d-flex gap-2 align-items-center bg-white small">
+                    <img src="<?= e($it['image']) ?>" alt=""
+                    style="width:52px;height: 52px;object-fit:contain;" class="rounded border bg-white p-1 flex-shrink-0">
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold text-dark">
+                            <?= e($it['product_name']) ?>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.76rem;">
+                            <?= e($it['variant_info']) ?> • <code><?= e($it['sku']) ?></code>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span class="text-muted">Số lương: <?= (int)$it['quantity'] ?></span>
+                            <strong class="text-danger"><?= money($it['price'] * $it['quantity']) ?></strong>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
             <div class="text-end small">
                 <div>Tạm tính: <strong>
                     <?= money($order['subtotal']) ?>
@@ -95,7 +132,7 @@
                     Tổng cộng: <?= money($order['total']) ?>
                 </div>
             </div>
-            <div class="d-flex justify-content-center gap-2 mt-4">
+            <div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
                 <a href="/tai-khoan/don-hang" class="btn btn-outline-dark">Xem đơn hàng của tôi</a>
                 <a href="/san-pham" class="btn btn-dark">Tiếp tục mua sắm</a>
             </div>

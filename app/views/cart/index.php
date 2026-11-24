@@ -23,7 +23,7 @@ $coupon   = $summary['coupon'];
   <div class="row g-4">
     <!-- Cột trái: Danh sách mặt hàng -->
     <div class="col-12 col-lg-8">
-      <form method="POST" action="/gio-hang/cap-nhat" class="card border-0 shadow-sm">
+      <form method="POST" action="/gio-hang/cap-nhat" class="card d-none d-md-block">
         <?= csrf_field() ?>
         <div class="table-responsive">
           <table class="table align-middle mb-0" style="min-width:580px;">
@@ -80,7 +80,48 @@ $coupon   = $summary['coupon'];
           <button type="submit" class="btn btn-dark btn-sm">Cập nhật số lượng</button>
         </div>
       </form>
-
+      <!-- Giỏ hàng mobile -->
+       <form method="POST" action="/gio-hang/cap-nhat" class="d-md-none d-grid gap-3">
+        <?= csrf_field() ?>
+        <?php foreach($items as $item): ?>
+          <div class="card p-3">
+            <div class="d-flex gap-3 mb-2">
+              <img src="<?= e($item['image']) ?>" alt="" style="width: 64px;height: 64px;object-fit:contain;" class="rounded border bg-white p-1 flex-shrink-0">
+              <div class="small flex-grow-1">
+                <a href="/san-pham/<?= e($item['product_slug']) ?>" class="fw-bold text-dark text-decoration-none d-block">
+                  <?= e($item['product_name']) ?>
+                </a>
+                <div class="text-muted">
+                  <?= e($item['color']) ?> <?= !empty($item['storage']) ? ' • ' . e($item['storage']) : ''  ?>
+                </div>
+                <div class="fw-bold text-danger mt-1">
+                  <?= money($item['line_total']) ?>
+                </div>
+              </div>
+              <button type="submit" form="removeForm-<?= (int)$item['variant_id'] ?>" class="btn btn-sm btn-outline-danger align-self-start">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center pt-2 border-top small">
+              <span class="text-muted">
+                Đơn giá: <?= money($item['unit_price']) ?>
+              </span>
+              <div class="d-flex align-items-center gap-2">
+                <span>SL:</span>
+                <input type="number" name="qty[<?= (int)$item['variant_id'] ?>]" value="<?= (int)$item['qty'] ?>" min="0" max="<?= (int)$item['stock'] ?>" class="form-control form-control-sm" style="width: 72px;">
+              </div>
+            </div>
+          </div>
+        <?php endforeach; ?>
+        <div class="d-flex justify-content-between gap-2">
+          <a href="/san-pham" class="btn btn-outline-dark btn-sm flex-grow-1">
+            <i class="bi bi-arrow-left me-1"></i>Mua thêm
+          </a>
+          <button type="submit" class="btn btn-dark btn-sm flex-grow-1">
+            Cập nhật SL
+          </button>
+        </div>  
+       </form>          
       <!-- Các form ẩn dùng để xóa từng dòng sản phẩm -->
       <?php foreach ($items as $item): ?>
         <form id="removeForm-<?= (int)$item['variant_id'] ?>" method="POST" action="/gio-hang/xoa" class="d-none">

@@ -125,7 +125,17 @@ class Order
             return null;
         }
 
-        $itemStmt = Database::pdo()->prepare('SELECT * FROM order_items WHERE order_id = :oid');
+        $itemStmt = Database::pdo()->prepare("
+            SELECT oi.*,
+            ( SELECT pm.file_path 
+              FROM product_variants pv
+              LEFT JOIN product_media pm ON pm.product_id = pv.product_id
+              WHERE pv.id = oi.variant_id
+              ORDER BY (pm.variant_id = pv.id) DESC,
+              pm.sort_order ASC LIMIT 1) AS image
+            FROM order_items oi
+            WHERE oi.order_id = :oid   
+        ");
         $itemStmt->execute([':oid' => $order['id']]);
         $order['items'] = $itemStmt->fetchAll();
 
@@ -146,7 +156,23 @@ class Order
     // Lấy danh sách tất cả đơn hàng mới nhất cho Admin
     public static function all(): array
     {
-        $stmt = Database::pdo()->query('SELECT * FROM orders ORDER BY id DESC');
+        $sql = "SELECT o.*,
+            (SELECT COUNT(*)
+             FROM order_items oi
+             WHERE oi.order_id = o.id) AS item_count,
+            (SELECT oi.product_name
+             FROM order_items oi 
+             WHERE oi.order_id = o.id LIMIT 1) AS first_product,
+            (SELECT pm.file_path
+             FROM order_items oi
+             JOIN product_variants pv ON pv.id = oi.variant_id
+             LEFT JOIN product_media pm ON pm.product_id = pv.product_id
+             WHERE oi.order_id = o.id
+             ORDER BY (pm.variant_id = pv.id) DESC,
+             pm.sort_order ASC LIMIT 1) AS first_image  
+            FROM orders o
+            ORDER BY o.id DESC ";
+        $stmt = Database::pdo()->query($sql);
         return $stmt->fetchAll();
     }
 

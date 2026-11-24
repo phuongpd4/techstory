@@ -143,9 +143,17 @@ $statusLabel = [
                     <?php [$label,$badge] = $statusLabel[$o['status']] ?? [$o['status'],'secondary']; ?>  
                   <tr>
                     <td>
-                        <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="fw-bold text-dark text-decoration-none">
-                           <?= e($o['order_code']) ?> 
-                        </a>
+                       <div class="d-flex align-items-center gap-2">
+                        <img src="<?= e($o['first_image']) ?>" alt="" style="width: 44px;height: 44px;object-fit:contain;" class="rounded border bg-white p-1 flex-shrink-0">
+                        <div>
+                            <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="fw-bold text-dark text-decoration-none">
+                                <?= e($o['order_code']) ?>
+                            </a>
+                            <div class="text-muted" style="font-size:0.75rem">
+                                <?= e($o['first_product'] ?? '') ?><?= (int)($o['item_count'] ?? 1) > 1 ? ' (+' . ((int)$o['item_count'] - 1) . ')' : '' ?>
+                            </div>
+                        </div>
+                       </div>
                         <div class="text-muted">
                             <?= e($o['created_at']) ?>
                         </div>
@@ -193,13 +201,25 @@ $statusLabel = [
        <?php foreach($orders as $o): ?>
         <?php [$label, $badge] = $statusLabel[$o['status']] ?? [$o['status'], 'secondary']; ?>
         <div class="border rounded-3 p-3 bg-white">
+            <div class="d-flex align-items-center gap-3 mb-2">
+                <img src="<?= e($o['first_image'] ?? '/assets/images/placeholder.svg') ?>" alt=""
+                     style="width:52px;height:52px;object-fit:contain;" class="rounded border bg-white p-1 flex-shrink-0">
+                <div class="small">
+                    <div class="fw-semibold text-dark"><?= e($o['first_product'] ?? 'Đơn hàng TechStore') ?></div>
+                    <?php if ((int)($o['item_count'] ?? 1) > 1): ?>
+                        <div class="text-muted">và <?= (int)$o['item_count'] - 1 ?> sản phẩm khác</div>
+                    <?php endif; ?>
+                </div>
+            </div>
             <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+                
                 <a href="/dat-hang-thanh-cong/<?= e($o['order_code']) ?>" class="fw-bold text-dark text-decoration-none">
                     <?= e($o['order_code']) ?>
                 </a>
                 <span class="badge bg-<?= $badge ?>">
                     <?= $label ?>
                 </span>
+                
             </div>
             <div class="small fw-semibold">
                 <?= e($o['receiver_name']) ?> • <?= e($o['receiver_phone']) ?> 

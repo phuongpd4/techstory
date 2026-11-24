@@ -59,9 +59,9 @@
                                     <li><a class="dropdown-item text-danger fw-semibold" href="/admin"><i class="bi bi-sliders me-2"></i>Quản trị (Admin)</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                 <?php endif; ?>
-                                <li><a class="dropdown-item" href="/tai-khoan/don-hang"><i class="bi bi-box-seam me-2"></i>Đơn mua của tôi</a></li>
+                                <li><a class="dropdown-item" href="/tai-khoan/don-hang"><i class="bi bi-box-seam me-2"></i>Đơn hàng của tôi</a></li>
                                 <li><a class="dropdown-item" href="/yeu-thich"><i class="bi bi-heart me-2"></i>Sản phẩm yêu thích</a></li>
-                                <li><a class="dropdown-item" href="/tai-khoan/dia-chi"><i class="bi bi-geo-alt me-2"></i>Sổ địa chỉ</a></li>
+                                <li><a class="dropdown-item" href="/tai-khoan/dia-chi"><i class="bi bi-geo-alt me-2"></i>Địa chỉ đã lưu</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="POST" action="/dang-xuat">
