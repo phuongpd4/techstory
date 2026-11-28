@@ -4,7 +4,7 @@ class CheckoutController extends Controller{
 
     public function index():void
     {
-        $summary = Cartcontroller::getCartSummary();
+        $summary = CartController::getCartSummary();
         if(empty($summary['items'])){
             $this->redirect('/gio-hang');
             

@@ -4,7 +4,7 @@ class HomeController extends Controller
 {
     public function index(): void
     {
-        $categories = Category::all();
+        $categories = Category::popular();
         $brands     = Brand::all();
         $products   = Product::featured(6); 
         $this->render('home/index', [

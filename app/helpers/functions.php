@@ -50,7 +50,6 @@ function require_admin(): void
 }
 
 
-
 function slugify(string $str): string
 {
     $str = mb_strtolower(trim($str), 'UTF-8');
@@ -61,3 +60,21 @@ function slugify(string $str): string
     return trim($str, '-');
 }
 
+function set_flash(string $type, string $message): void
+{
+    $_SESSION['flash'] = [
+        'type' => $type,
+        'message' => $message,
+    ];
+}
+
+// Lấy thông báo ra hiển thị rồi xóa ngay
+function get_flash(): ?array
+{
+    if(empty($_SESSION['flash'])){
+        return null;
+    }
+    $flash = $_SESSION['flash'];
+    unset($_SESSION['flash']);
+    return $flash;
+}
